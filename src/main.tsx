@@ -25,18 +25,21 @@ function RouteLoading() {
 }
 
 /** Silent error boundary — if VlyToolbar crashes it renders nothing instead of
- *  crashing the whole app (e.g. hook errors in the browser runtime). */
+ * crashing the whole app (e.g. hook errors in the browser runtime). */
 class ToolbarErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { hasError: boolean }
 > {
   state = { hasError: false };
+
   static getDerivedStateFromError() {
     return { hasError: true };
   }
+
   componentDidCatch(err: Error) {
     console.warn("[VlyToolbar] Caught error, toolbar disabled:", err.message);
   }
+
   render() {
     return this.state.hasError ? null : this.props.children;
   }
@@ -48,6 +51,7 @@ class RootErrorBoundary extends React.Component<
   { hasError: boolean; message: string; stack: string }
 > {
   state = { hasError: false, message: "", stack: "" };
+
   static getDerivedStateFromError(error: Error) {
     return {
       hasError: true,
@@ -55,18 +59,22 @@ class RootErrorBoundary extends React.Component<
       stack: error.stack || "",
     };
   }
+
   componentDidCatch(err: Error) {
     console.error("[Preview] Root crash:", err);
   }
+
   render() {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-6">
           <div className="max-w-lg text-center">
             <p className="text-sm font-semibold">Preview runtime error</p>
+
             <p className="mt-2 text-xs text-muted-foreground break-words">
               {this.state.message}
             </p>
+
             {this.state.stack && (
               <pre className="mt-3 text-left text-[10px] leading-4 text-muted-foreground/80 max-h-40 overflow-auto rounded border border-border/60 p-2">
                 {this.state.stack}
@@ -76,16 +84,18 @@ class RootErrorBoundary extends React.Component<
         </div>
       );
     }
+
     return this.props.children;
   }
 }
 
-const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
-
-
+const convex = new ConvexReactClient(
+  import.meta.env.VITE_CONVEX_URL as string
+);
 
 function RouteSyncer() {
   const location = useLocation();
+
   useEffect(() => {
     window.parent.postMessage(
       { type: "iframe-route-change", path: location.pathname },
@@ -100,13 +110,14 @@ function RouteSyncer() {
         if (event.data.direction === "forward") window.history.forward();
       }
     }
+
     window.addEventListener("message", handleMessage);
+
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
   return null;
 }
-
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -114,16 +125,20 @@ createRoot(document.getElementById("root")!).render(
       <ToolbarErrorBoundary>
         <VlyToolbar />
       </ToolbarErrorBoundary>
+
       <ConvexAuthProvider client={convex}>
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <RouteSyncer />
+
           <Suspense fallback={<RouteLoading />}>
             <Routes>
               <Route path="/" element={<Landing />} />
+
               <Route
                 path="/auth"
                 element={<AuthPage redirectAfterAuth="/dashboard" />}
               />
+
               <Route
                 path="/dashboard"
                 element={
@@ -132,10 +147,12 @@ createRoot(document.getElementById("root")!).render(
                   </RequireAuth>
                 }
               />
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
         </BrowserRouter>
+
         <Toaster />
       </ConvexAuthProvider>
     </RootErrorBoundary>
