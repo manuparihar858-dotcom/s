@@ -1,0 +1,17 @@
+{
+  "name": "Sweet Retreat Web",
+  "short_name": "Sweet Retreat",
+  "description": "Order cakes, chocolates, brownies and more from Sweet Retreat, a boutique bakery in Indore — straight from the menu, right on WhatsApp.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf5f0",
+  "theme_color": "#b4516f",
+  "icons": [
+    {
+      "src": "/Logo.jpg",
+      "sizes": "any",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
