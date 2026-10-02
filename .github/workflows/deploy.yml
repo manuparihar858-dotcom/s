@@ -19,6 +19,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      VITE_CONVEX_URL: https://veracious-panda-577.eu-west-1.convex.cloud
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
